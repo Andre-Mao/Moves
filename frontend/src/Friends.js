@@ -74,65 +74,81 @@ function Friends({ user, onFriendClick }) {
   };
 
   return (
-    <div style={{ 
-      width: '250px', 
-      borderRight: '1px solid #ccc', 
-      padding: '20px',
-      height: '100vh',
-      overflowY: 'auto'
-    }}>
-      <h2>Friends</h2>
+    <div className="w-64 border-r border-gray-300 p-5 h-screen overflow-y-auto bg-gray-50">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">Friends</h2>
       
-      <button onClick={() => setShowAddForm(!showAddForm)}>
-        {showAddForm ? 'Cancel' : '+ Add Friend'}
-      </button>
-      
-      {friendRequests.length > 0 && (
-        <button onClick={() => setShowRequests(!showRequests)}>
-          Requests ({friendRequests.length})
+      <div className="space-y-2 mb-4">
+        <button 
+          onClick={() => setShowAddForm(!showAddForm)}
+          className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+        >
+          {showAddForm ? 'Cancel' : '+ Add Friend'}
         </button>
-      )}
+        
+        {friendRequests.length > 0 && (
+          <button 
+            onClick={() => setShowRequests(!showRequests)}
+            className="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors relative"
+          >
+            Requests ({friendRequests.length})
+          </button>
+        )}
+      </div>
 
       {showAddForm && (
-        <form onSubmit={handleSendRequest} style={{ marginTop: '10px' }}>
+        <form onSubmit={handleSendRequest} className="mb-4 space-y-2">
           <input 
             type="text" 
             placeholder="Username"
             value={friendUsername}
             onChange={(e) => setFriendUsername(e.target.value)}
             required
+            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button type="submit">Send</button>
+          <button 
+            type="submit"
+            className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+          >
+            Send
+          </button>
         </form>
       )}
 
       {showRequests && (
-        <div style={{ marginTop: '10px', backgroundColor: '#f0f0f0', padding: '10px' }}>
-          <h3>Pending Requests</h3>
+        <div className="mb-4 bg-gray-100 p-3 rounded">
+          <h3 className="font-bold mb-2 text-gray-700">Pending Requests</h3>
           {friendRequests.map(req => (
-            <div key={req.id} style={{ marginBottom: '10px' }}>
-              <p><strong>{req.user.username}</strong></p>
-              <button onClick={() => handleAcceptRequest(req.id)}>Accept</button>
-              <button onClick={() => handleDeclineRequest(req.id)}>Decline</button>
+            <div key={req.id} className="mb-3 pb-3 border-b border-gray-300 last:border-b-0">
+              <p className="font-semibold mb-2">{req.user.username}</p>
+              <div className="space-x-2">
+                <button 
+                  onClick={() => handleAcceptRequest(req.id)}
+                  className="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600"
+                >
+                  Accept
+                </button>
+                <button 
+                  onClick={() => handleDeclineRequest(req.id)}
+                  className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+                >
+                  Decline
+                </button>
+              </div>
             </div>
           ))}
         </div>
       )}
 
-      <div style={{ marginTop: '20px' }}>
-        <h3>My Friends</h3>
+      <div className="mt-5">
+        <h3 className="font-bold mb-3 text-gray-700">My Friends</h3>
         {friends.length === 0 ? (
-          <p>No friends yet</p>
+          <p className="text-gray-500 text-sm">No friends yet</p>
         ) : (
-          <ul style={{ listStyle: 'none', padding: 0 }}>
+          <ul className="space-y-1">
             {friends.map(friend => (
               <li 
                 key={friend.id} 
-                style={{ 
-                  padding: '10px', 
-                  cursor: 'pointer',
-                  borderBottom: '1px solid #eee'
-                }}
+                className="p-3 cursor-pointer border-b border-gray-200 hover:bg-gray-200 rounded transition-colors"
                 onClick={() => onFriendClick(friend)}
               >
                 {friend.username}
@@ -143,7 +159,6 @@ function Friends({ user, onFriendClick }) {
       </div>
     </div>
   );
-
 }
 
-export default Friends;
+export default Friends; 

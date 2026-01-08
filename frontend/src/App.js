@@ -49,11 +49,20 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       {!user ? (
-        <div className="flex flex-col items-center justify-center min-h-screen">
-          <h1 className="text-4xl font-bold mb-4 text-gray-800">Moves App</h1>
-          <p className="text-gray-600 mb-8">Welcome to your activity voting app!</p>
+        <div className="flex flex-col items-center justify-start min-h-screen px-4 pt-20">
+          <div className="mb-12 relative">
+            <h1 className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-red-500 to-yellow-500 animate-pulse">
+              MOVES
+            </h1>
+            <div className="absolute inset-0 text-8xl font-black text-transparent bg-clip-text bg-gradient-to-t from-red-600 via-orange-400 to-yellow-300 blur-sm animate-pulse" 
+                 style={{ animationDelay: '0.3s' }}>
+              MOVES
+            </div>
+          </div>
+          
+          <p className="text-gray-300 mb-12 text-xl">The place to finally make it out of the groupchat.</p>
           <Login onLoginSuccess={handleLoginSuccess} />
         </div>
       ) : (

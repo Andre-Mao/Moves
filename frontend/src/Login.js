@@ -42,59 +42,59 @@ function Login({ onLoginSuccess }) {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">
-        {isRegistering ? 'Register' : 'Login'}
+    <div className="max-w-xl w-full mx-auto p-8 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+      <h2 className="text-3xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">
+        {isRegistering ? 'Create Account' : 'Welcome Back'}
       </h2>
-      <form onSubmit={isRegistering ? handleRegister : handleLogin} className="space-y-4">
+      <form onSubmit={isRegistering ? handleRegister : handleLogin} className="space-y-5">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Username:
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Username
           </label>
           <input 
             type="text" 
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-white placeholder-gray-400"
           />
         </div>
         {isRegistering && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email:
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Email
             </label>
             <input 
               type="email" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-white placeholder-gray-400"
             />
           </div>
         )}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Password:
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Password
           </label>
           <input 
             type="password" 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-white placeholder-gray-400"
           />
         </div>
         <button 
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors font-medium"
+          className="w-full bg-gradient-to-r from-orange-500 via-red-500 to-red-600 text-white py-3 px-4 rounded-lg hover:from-orange-600 hover:via-red-600 hover:to-red-700 transition-all font-semibold text-lg shadow-lg"
         >
           {isRegistering ? 'Register' : 'Login'}
         </button>
       </form>
       <button 
         onClick={() => setIsRegistering(!isRegistering)}
-        className="w-full mt-4 text-blue-500 hover:text-blue-700 text-sm"
+        className="w-full mt-6 text-orange-400 hover:text-orange-300 text-sm font-medium transition-colors"
       >
         {isRegistering ? 'Already have an account? Login' : 'Need an account? Register'}
       </button>

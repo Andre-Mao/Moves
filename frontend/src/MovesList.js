@@ -124,6 +124,9 @@ function MovesList({ user, groupId }) {
 
   if (loading) return <p className="text-center text-gray-500 py-8">Loading moves...</p>;
 
+  // Check if current user is the group leader
+  const isGroupLeader = groupSettings && groupSettings.created_by === user.id;
+
   return (
     <div>
       <CreateMove groupId={groupId} onMoveCreated={() => { fetchMoves(); fetchVotes(); }} user={user} />
@@ -146,6 +149,9 @@ function MovesList({ user, groupId }) {
             const timeRemainingSeconds = Math.max(0, (deadline - currentTime) / 1000);
             const isExpired = timeRemainingSeconds <= 0;
             const isUrgent = timeRemainingSeconds > 0 && timeRemainingSeconds < 3600; // Less than 1 hour
+
+            // User can manage move if they created it OR if they're the group leader
+            const canManageMove = move.created_by === user.id || isGroupLeader;
 
             return (
               <div 
@@ -256,9 +262,9 @@ function MovesList({ user, groupId }) {
                       </>
                     )}
 
-                    {/* Edit/Delete buttons */}
-                    {move.created_by === user.id && (
-                      <div className="flex gap-2 mt-4">
+                    {/* Edit/Delete buttons - show for move creator OR group leader */}
+                    {canManageMove && (
+                      <div className="flex gap-2 mt-4 items-center">
                         <button 
                           onClick={() => handleEdit(move.id)}
                           className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors font-medium"
@@ -269,8 +275,13 @@ function MovesList({ user, groupId }) {
                           onClick={() => handleDelete(move.id)}
                           className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors font-medium"
                         >
-                          Delete
+                          {metThreshold ? 'Clear Approved Move' : 'Delete'}
                         </button>
+                        {isGroupLeader && move.created_by !== user.id && (
+                          <span className="text-xs text-gray-500 ml-2">
+                            👑 Group Leader Controls
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>

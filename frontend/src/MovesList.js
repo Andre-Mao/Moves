@@ -62,7 +62,7 @@ function MovesList({ user, groupId }) {
       user_id: user.id
     })
       .then(response => {
-        fetchVotes(); // Refresh vote counts
+        fetchVotes();
       })
       .catch(error => {
         console.error('Error voting:', error);
@@ -98,26 +98,34 @@ function MovesList({ user, groupId }) {
     fetchMoves();
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className="text-center text-gray-500 py-8">Loading moves...</p>;
 
   return (
     <div>
       <CreateMove groupId={groupId} onMoveCreated={() => { fetchMoves(); fetchVotes(); }} user={user} />
+      
       {moves.length === 0 ? (
-        <p>No moves yet!</p>
+        <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 mt-6">
+          <p className="text-gray-500 text-lg">No moves yet!</p>
+          <p className="text-gray-400 text-sm mt-2">Create the first move to get started.</p>
+        </div>
       ) : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
+        <div className="space-y-4 mt-6">
           {moves.map(move => {
             const moveVotes = votesData[move.id] || { vote_count: 0, voter_ids: [] };
             const hasVoted = moveVotes.voter_ids.includes(user.id);
+            const minVotes = groupSettings?.min_votes_required || 3;
+            const metThreshold = moveVotes.vote_count >= minVotes;
 
             return (
-              <li key={move.id} style={{ 
-                border: '1px solid #ccc', 
-                padding: '15px', 
-                marginBottom: '10px',
-                borderRadius: '5px'
-              }}>
+              <div 
+                key={move.id} 
+                className={`p-6 rounded-lg border-2 transition-all ${
+                  metThreshold 
+                    ? 'bg-green-50 border-green-300 shadow-md' 
+                    : 'bg-white border-gray-200 shadow-sm hover:shadow-md'
+                }`}
+              >
                 {editingMoveId === move.id ? (
                   <EditMove 
                     move={move} 
@@ -126,47 +134,81 @@ function MovesList({ user, groupId }) {
                   />
                 ) : (
                   <div>
-                    <h3>{move.name}</h3>
-                    <p>{move.description}</p> 
-                      <div style={{ marginTop: '10px' }}>
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex-1">
+                        <h3 className="text-2xl font-bold text-gray-800 mb-2">{move.name}</h3>
+                        {move.description && (
+                          <p className="text-gray-600">{move.description}</p>
+                        )}
+                      </div>
+                      {metThreshold && (
+                        <span className="bg-green-500 text-white text-sm font-bold px-3 py-1 rounded-full ml-4">
+                          ✓ Ready!
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-4 mt-4">
                       <button 
                         onClick={() => handleVote(move.id)}
-                        style={{
-                          backgroundColor: hasVoted ? '#28a745' : '#007bff',
-                          color: 'white',
-                          border: 'none',
-                          padding: '8px 15px',
-                          borderRadius: '5px',
-                          cursor: 'pointer',
-                          marginRight: '10px'
-                        }}
+                        className={`${
+                          hasVoted 
+                            ? 'bg-green-500 hover:bg-green-600' 
+                            : 'bg-blue-500 hover:bg-blue-600'
+                        } text-white font-semibold px-6 py-2.5 rounded-lg transition-colors shadow-sm`}
                       >
                         {hasVoted ? '✓ Voted' : 'Vote'}
                       </button>
                       
-                      <span style={{ 
-                        fontWeight: 'bold',
-                        color: moveVotes.vote_count >= (groupSettings?.min_votes_required || 3) ? '#28a745' : '#dc3545'
-                      }}>
-                        {moveVotes.vote_count} / {groupSettings?.min_votes_required || 3} votes
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <div className={`text-2xl font-bold ${
+                          metThreshold ? 'text-green-600' : 'text-gray-700'
+                        }`}>
+                          {moveVotes.vote_count}
+                        </div>
+                        <div className="text-gray-500">
+                          / {minVotes} votes
+                        </div>
+                      </div>
+
+                      {/* Progress bar */}
+                      <div className="flex-1 max-w-xs">
+                        <div className="w-full bg-gray-200 rounded-full h-2.5">
+                          <div 
+                            className={`h-2.5 rounded-full transition-all ${
+                              metThreshold ? 'bg-green-500' : 'bg-blue-500'
+                            }`}
+                            style={{ width: `${Math.min((moveVotes.vote_count / minVotes) * 100, 100)}%` }}
+                          ></div>
+                        </div>
+                      </div>
                       
                       {move.created_by === user.id && (
-                        <>
-                          <button onClick={() => handleEdit(move.id)} style={{ marginLeft: '10px' }}>Edit</button>
-                          <button onClick={() => handleDelete(move.id)}>Delete</button>
-                        </>
+                        <div className="flex gap-2 ml-auto">
+                          <button 
+                            onClick={() => handleEdit(move.id)}
+                            className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors font-medium"
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(move.id)}
+                            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors font-medium"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       )}
                     </div>
                   </div>
                 )}
-              </li>
+              </div>
             );
           })}
-        </ul>
+        </div>
       )}
     </div>
   );
 }
 
-export default MovesList; 
+export default MovesList;

@@ -9,6 +9,7 @@ function MovesList({ user, groupId }) {
   const [editingMoveId, setEditingMoveId] = useState(null);
   const [votesData, setVotesData] = useState({});
   const [groupSettings, setGroupSettings] = useState(null);
+  const [currentTime, setCurrentTime] = useState(Date.now());
 
   useEffect(() => {
     axios.post(`http://localhost:5000/groups/${groupId}/cleanup-moves`)
@@ -23,6 +24,13 @@ function MovesList({ user, groupId }) {
         fetchVotes();
         fetchGroupSettings();
       });
+
+    // Update current time every second for countdown
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, [groupId]);
 
   const fetchMoves = () => {
@@ -98,6 +106,22 @@ function MovesList({ user, groupId }) {
     fetchMoves();
   };
 
+  const formatTimeRemaining = (seconds) => {
+    if (seconds <= 0) return 'EXPIRED';
+    
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m ${secs}s`;
+    } else if (minutes > 0) {
+      return `${minutes}m ${secs}s`;
+    } else {
+      return `${secs}s`;
+    }
+  };
+
   if (loading) return <p className="text-center text-gray-500 py-8">Loading moves...</p>;
 
   return (
@@ -116,13 +140,21 @@ function MovesList({ user, groupId }) {
             const hasVoted = moveVotes.voter_ids.includes(user.id);
             const minVotes = groupSettings?.min_votes_required || 3;
             const metThreshold = moveVotes.vote_count >= minVotes;
+            
+            // Calculate time remaining
+            const deadline = new Date(move.deadline);
+            const timeRemainingSeconds = Math.max(0, (deadline - currentTime) / 1000);
+            const isExpired = timeRemainingSeconds <= 0;
+            const isUrgent = timeRemainingSeconds > 0 && timeRemainingSeconds < 3600; // Less than 1 hour
 
             return (
               <div 
                 key={move.id} 
                 className={`p-6 rounded-lg border-2 transition-all ${
                   metThreshold 
-                    ? 'bg-green-50 border-green-300 shadow-md' 
+                    ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-400 shadow-lg' 
+                    : isExpired
+                    ? 'bg-red-50 border-red-300 opacity-75'
                     : 'bg-white border-gray-200 shadow-sm hover:shadow-md'
                 }`}
               >
@@ -142,64 +174,105 @@ function MovesList({ user, groupId }) {
                         )}
                       </div>
                       {metThreshold && (
-                        <span className="bg-green-500 text-white text-sm font-bold px-3 py-1 rounded-full ml-4">
-                          ✓ Ready!
-                        </span>
+                        <div className="ml-4">
+                          <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-lg font-bold px-5 py-2 rounded-full shadow-md flex items-center gap-2">
+                            <span className="text-2xl">✓</span>
+                            <span>APPROVED</span>
+                          </span>
+                        </div>
                       )}
                     </div>
-                    
-                    <div className="flex items-center gap-4 mt-4">
-                      <button 
-                        onClick={() => handleVote(move.id)}
-                        className={`${
-                          hasVoted 
-                            ? 'bg-green-500 hover:bg-green-600' 
-                            : 'bg-blue-500 hover:bg-blue-600'
-                        } text-white font-semibold px-6 py-2.5 rounded-lg transition-colors shadow-sm`}
-                      >
-                        {hasVoted ? '✓ Voted' : 'Vote'}
-                      </button>
-                      
-                      <div className="flex items-center gap-2">
-                        <div className={`text-2xl font-bold ${
-                          metThreshold ? 'text-green-600' : 'text-gray-700'
-                        }`}>
-                          {moveVotes.vote_count}
-                        </div>
-                        <div className="text-gray-500">
-                          / {minVotes} votes
-                        </div>
-                      </div>
 
-                      {/* Progress bar */}
-                      <div className="flex-1 max-w-xs">
-                        <div className="w-full bg-gray-200 rounded-full h-2.5">
-                          <div 
-                            className={`h-2.5 rounded-full transition-all ${
-                              metThreshold ? 'bg-green-500' : 'bg-blue-500'
-                            }`}
-                            style={{ width: `${Math.min((moveVotes.vote_count / minVotes) * 100, 100)}%` }}
-                          ></div>
+                    {/* Timer and voting section - only show if not approved */}
+                    {!metThreshold && (
+                      <>
+                        {/* Countdown Timer */}
+                        {!isExpired && (
+                          <div className={`mb-4 p-4 rounded-lg ${
+                            isUrgent 
+                              ? 'bg-red-100 border-2 border-red-400' 
+                              : 'bg-blue-50 border-2 border-blue-300'
+                          }`}>
+                            <div className="flex items-center justify-between">
+                              <span className={`font-semibold ${isUrgent ? 'text-red-800' : 'text-blue-800'}`}>
+                                ⏰ Time Remaining:
+                              </span>
+                              <span className={`text-2xl font-bold font-mono ${
+                                isUrgent ? 'text-red-600 animate-pulse' : 'text-blue-600'
+                              }`}>
+                                {formatTimeRemaining(timeRemainingSeconds)}
+                              </span>
+                            </div>
+                            <div className="mt-2 text-sm text-gray-600">
+                              {isUrgent ? '⚠️ Hurry! This move will expire soon!' : 'Vote now to approve this move'}
+                            </div>
+                          </div>
+                        )}
+
+                        {isExpired && (
+                          <div className="mb-4 p-4 rounded-lg bg-red-100 border-2 border-red-400">
+                            <div className="text-red-800 font-bold text-center">
+                              ⏰ EXPIRED - This move will be deleted
+                            </div>
+                          </div>
+                        )}
+                        
+                        <div className="flex items-center gap-4 mt-4">
+                          <button 
+                            onClick={() => handleVote(move.id)}
+                            disabled={isExpired}
+                            className={`${
+                              hasVoted 
+                                ? 'bg-green-500 hover:bg-green-600' 
+                                : 'bg-blue-500 hover:bg-blue-600'
+                            } ${isExpired ? 'opacity-50 cursor-not-allowed' : ''} text-white font-semibold px-6 py-2.5 rounded-lg transition-colors shadow-sm`}
+                          >
+                            {hasVoted ? '✓ Voted' : 'Vote'}
+                          </button>
+                          
+                          <div className="flex items-center gap-2">
+                            <div className={`text-2xl font-bold ${
+                              moveVotes.vote_count >= minVotes ? 'text-green-600' : 'text-gray-700'
+                            }`}>
+                              {moveVotes.vote_count}
+                            </div>
+                            <div className="text-gray-500">
+                              / {minVotes} votes
+                            </div>
+                          </div>
+
+                          {/* Progress bar */}
+                          <div className="flex-1 max-w-xs">
+                            <div className="w-full bg-gray-200 rounded-full h-3">
+                              <div 
+                                className={`h-3 rounded-full transition-all ${
+                                  moveVotes.vote_count >= minVotes ? 'bg-green-500' : 'bg-blue-500'
+                                }`}
+                                style={{ width: `${Math.min((moveVotes.vote_count / minVotes) * 100, 100)}%` }}
+                              ></div>
+                            </div>
+                          </div>
                         </div>
+                      </>
+                    )}
+
+                    {/* Edit/Delete buttons */}
+                    {move.created_by === user.id && (
+                      <div className="flex gap-2 mt-4">
+                        <button 
+                          onClick={() => handleEdit(move.id)}
+                          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors font-medium"
+                        >
+                          Edit
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(move.id)}
+                          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors font-medium"
+                        >
+                          Delete
+                        </button>
                       </div>
-                      
-                      {move.created_by === user.id && (
-                        <div className="flex gap-2 ml-auto">
-                          <button 
-                            onClick={() => handleEdit(move.id)}
-                            className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors font-medium"
-                          >
-                            Edit
-                          </button>
-                          <button 
-                            onClick={() => handleDelete(move.id)}
-                            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors font-medium"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -211,4 +284,4 @@ function MovesList({ user, groupId }) {
   );
 }
 
-export default MovesList;
+export default MovesList; 

@@ -5,12 +5,28 @@ import Groups from './Groups';
 import Friends from './Friends';
 import UserProfile from './UserProfile';
 import Messages from './Messages';
+import Toast from './Toast';
+import { setShowToast } from './ToastManager';
 
 function App() {
   const [user, setUser] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [messagingFriend, setMessagingFriend] = useState(null);
+  const [toasts, setToasts] = useState([]);
+
+  // Set up global toast manager
+  useState(() => {
+    let toastId = 0;
+    setShowToast((message, type) => {
+      const id = toastId++;
+      setToasts(prev => [...prev, { id, message, type }]);
+    });
+  }, []);
+
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   const handleLoginSuccess = (userData) => {
     setUser(userData);
@@ -50,8 +66,22 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast, index) => (
+          <div key={toast.id} style={{ marginTop: `${index * 80}px` }}>
+            <Toast
+              message={toast.message}
+              type={toast.type}
+              onClose={() => removeToast(toast.id)}
+            />
+          </div>
+        ))}
+      </div>
+
       {!user ? (
         <div className="flex flex-col items-center justify-start min-h-screen px-4 pt-20">
+          {/* Animated Fire Title */}
           <div className="mb-12 relative">
             <h1 className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-red-500 to-yellow-500 animate-pulse">
               MOVES
@@ -62,7 +92,7 @@ function App() {
             </div>
           </div>
           
-          <p className="text-gray-300 mb-12 text-xl">The place to finally make it out of the groupchat.</p>
+          <p className="text-gray-300 mb-12 text-xl">Make your move. Vote on what's next.</p>
           <Login onLoginSuccess={handleLoginSuccess} />
         </div>
       ) : (
@@ -127,4 +157,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;

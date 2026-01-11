@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { showToast } from './ToastManager';
 
 function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState('');
@@ -15,11 +16,11 @@ function Login({ onLoginSuccess }) {
       password: password
     })
       .then(response => {
-        alert('Login successful!');
+        showToast('Login successful!', 'success');
         onLoginSuccess(response.data.user);
       })
       .catch(error => {
-        alert('Login failed: ' + (error.response?.data?.error || 'Unknown error'));
+        showToast('Login failed: ' + (error.response?.data?.error || 'Unknown error'), 'error');
       });
   };
 
@@ -32,12 +33,12 @@ function Login({ onLoginSuccess }) {
       password: password
     })
       .then(response => {
-        alert('Registration successful! Please login.');
+        showToast('Registration successful! Please login.', 'success');
         setIsRegistering(false);
         setPassword('');
       })
       .catch(error => {
-        alert('Registration failed: ' + (error.response?.data?.error || 'Unknown error'));
+        showToast('Registration failed: ' + (error.response?.data?.error || 'Unknown error'), 'error');
       });
   };
 

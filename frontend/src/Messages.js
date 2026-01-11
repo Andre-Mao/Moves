@@ -46,80 +46,85 @@ function Messages({ user, selectedFriend, onClose }) {
   };
 
   if (!selectedFriend) {
-    return <div style={{ padding: '20px' }}>Select a friend to start messaging</div>;
+    return (
+      <div className="flex items-center justify-center h-96 bg-gray-50 rounded-lg">
+        <p className="text-gray-500 text-lg">Select a friend to start messaging</p>
+      </div>
+    );
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-      padding: '20px'
-    }}>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderBottom: '2px solid #ccc',
-        paddingBottom: '10px',
-        marginBottom: '10px'
-      }}>
-        <h2>Chat with {selectedFriend.username}</h2>
-        <button onClick={onClose}>Close</button>
+    <div className="flex flex-col h-full max-h-[calc(100vh-12rem)] bg-white rounded-lg shadow-lg border border-gray-200">
+      {/* Header */}
+      <div className="flex justify-between items-center p-5 border-b-2 border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">
+            💬 {selectedFriend.username}
+          </h2>
+          <p className="text-sm text-gray-600">Online</p>
+        </div>
+        <button 
+          onClick={onClose}
+          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors font-medium"
+        >
+          Close
+        </button>
       </div>
 
-      <div style={{
-        flex: 1,
-        overflowY: 'auto',
-        marginBottom: '10px',
-        border: '1px solid #ccc',
-        padding: '10px',
-        borderRadius: '5px'
-      }}>
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto p-5 bg-gray-50 space-y-3">
         {messages.length === 0 ? (
-          <p style={{ textAlign: 'center', color: '#888' }}>No messages yet. Start the conversation!</p>
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <p className="text-gray-400 text-lg">No messages yet</p>
+              <p className="text-gray-300 text-sm mt-2">Start the conversation!</p>
+            </div>
+          </div>
         ) : (
           messages.map(msg => (
             <div 
               key={msg.id}
-              style={{
-                marginBottom: '10px',
-                padding: '10px',
-                borderRadius: '10px',
-                maxWidth: '70%',
-                backgroundColor: msg.sender_id === user.id ? '#007bff' : '#e9ecef',
-                color: msg.sender_id === user.id ? 'white' : 'black',
-                marginLeft: msg.sender_id === user.id ? 'auto' : '0',
-                marginRight: msg.sender_id === user.id ? '0' : 'auto'
-              }}
+              className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'}`}
             >
-              <p style={{ margin: 0 }}>{msg.content}</p>
-              <small style={{ 
-                fontSize: '0.75em',
-                opacity: 0.7
-              }}>
-                {new Date(msg.created_at).toLocaleTimeString()}
-              </small>
+              <div 
+                className={`max-w-[70%] px-4 py-3 rounded-2xl shadow-sm ${
+                  msg.sender_id === user.id 
+                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-br-none' 
+                    : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none'
+                }`}
+              >
+                <p className="break-words">{msg.content}</p>
+                <small className={`text-xs mt-1 block ${
+                  msg.sender_id === user.id ? 'text-blue-100' : 'text-gray-500'
+                }`}>
+                  {new Date(msg.created_at).toLocaleTimeString([], { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                  })}
+                </small>
+              </div>
             </div>
           ))
         )}
       </div>
 
-      <form onSubmit={handleSendMessage} style={{ display: 'flex' }}>
-        <input 
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type a message..."
-          style={{
-            flex: 1,
-            padding: '10px',
-            borderRadius: '5px',
-            border: '1px solid #ccc',
-            marginRight: '10px'
-          }}
-        />
-        <button type="submit">Send</button>
+      {/* Input Area */}
+      <form onSubmit={handleSendMessage} className="p-4 border-t-2 border-gray-200 bg-white">
+        <div className="flex gap-3">
+          <input 
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="Type a message..."
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <button 
+            type="submit"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-full hover:from-blue-600 hover:to-blue-700 transition-all font-semibold shadow-md"
+          >
+            Send
+          </button>
+        </div>
       </form>
     </div>
   );

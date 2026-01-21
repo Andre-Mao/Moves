@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from './config';
 
 function GroupSettings({ group, currentUser, onClose, onSettingsUpdated }) {
   const [minVotesRequired, setMinVotesRequired] = useState(group.min_votes_required || 3);
@@ -12,7 +13,7 @@ function GroupSettings({ group, currentUser, onClose, onSettingsUpdated }) {
   }, []);
 
   const fetchGroupMemberCount = () => {
-    axios.get(`http://localhost:5000/groups/${group.id}/member-count`)
+    axios.get(`${API_URL}/groups/${group.id}/member-count`)
       .then(response => {
         setGroupMemberCount(response.data.count);
         setLoading(false);
@@ -27,7 +28,7 @@ function GroupSettings({ group, currentUser, onClose, onSettingsUpdated }) {
   const handleSave = (e) => {
     e.preventDefault();
 
-    axios.put(`http://localhost:5000/groups/${group.id}/settings`, {
+    axios.put(`${API_URL}/groups/${group.id}/settings`, {
       user_id: currentUser.id,
       min_votes_required: parseInt(minVotesRequired),
       vote_deadline_hours: parseInt(voteDeadlineHours)

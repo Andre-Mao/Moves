@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { API_URL } from './config';
 
 function EditMove({ move, onMoveUpdated, onCancel }) {
   const [name, setName] = useState(move.name);
@@ -13,7 +14,7 @@ function EditMove({ move, onMoveUpdated, onCancel }) {
       description: description
     };
 
-    axios.put(`http://localhost:5000/api/moves/${move.id}`, updatedMove, {
+    axios.put(`${API_URL}/api/moves/${move.id}`, updatedMove, {
       headers: {
         'Content-Type': 'application/json'
       }

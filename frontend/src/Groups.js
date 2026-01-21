@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import GroupSettings from './GroupSettings'; 
 import axios from 'axios';
+import { API_URL } from './config';
 
 function Groups({ user, onGroupSelected }) {
   const [userGroups, setUserGroups] = useState([]);
@@ -19,7 +20,7 @@ function Groups({ user, onGroupSelected }) {
   }, []);
 
   const fetchUserGroups = () => {
-    axios.get(`http://localhost:5000/groups/user/${user.id}/groups`)
+    axios.get(`${API_URL}/groups/user/${user.id}/groups`)
       .then(response => {
         setUserGroups(response.data);
       })
@@ -29,7 +30,7 @@ function Groups({ user, onGroupSelected }) {
   };
 
   const fetchGroupInvitations = () => {
-    axios.get(`http://localhost:5000/groups/user/${user.id}/invitations`)
+    axios.get(`${API_URL}/groups/user/${user.id}/invitations`)
       .then(response => {
         setGroupInvitations(response.data);
       })
@@ -41,7 +42,7 @@ function Groups({ user, onGroupSelected }) {
   const handleCreateGroup = (e) => {
     e.preventDefault();
     
-    axios.post('http://localhost:5000/groups/groups', {
+    axios.post('${API_URL}/groups/groups', {
       name: newGroupName,
       created_by: user.id
     })
@@ -61,7 +62,7 @@ function Groups({ user, onGroupSelected }) {
   const handleJoinGroup = (e) => {
     e.preventDefault();
     
-    axios.post('http://localhost:5000/groups/join', {
+    axios.post('${API_URL}/groups/join', {
       join_key: joinKey,
       user_id: user.id
     })
@@ -77,7 +78,7 @@ function Groups({ user, onGroupSelected }) {
   };
 
   const handleAcceptInvitation = (invitationId) => {
-    axios.post(`http://localhost:5000/groups/invitations/${invitationId}/accept`)
+    axios.post(`${API_URL}/groups/invitations/${invitationId}/accept`)
       .then(response => {
         alert('Group invitation accepted!');
         fetchUserGroups();
@@ -89,7 +90,7 @@ function Groups({ user, onGroupSelected }) {
   };
 
   const handleDeclineInvitation = (invitationId) => {
-    axios.post(`http://localhost:5000/groups/invitations/${invitationId}/decline`)
+    axios.post(`${API_URL}/groups/invitations/${invitationId}/decline`)
       .then(response => {
         alert('Group invitation declined');
         fetchGroupInvitations();

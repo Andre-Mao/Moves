@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { showToast } from './ToastManager';
+import { API_URL } from './config';
 
 function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState('');
@@ -11,7 +12,7 @@ function Login({ onLoginSuccess }) {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    axios.post('http://localhost:5000/auth/login', {
+    axios.post(`${API_URL}/auth/login`, {
       username: username,
       password: password
     })
@@ -27,7 +28,7 @@ function Login({ onLoginSuccess }) {
   const handleRegister = (e) => {
     e.preventDefault();
 
-    axios.post('http://localhost:5000/auth/register', {
+    axios.post(`${API_URL}/auth/register`, {
       username: username,
       email: email,
       password: password

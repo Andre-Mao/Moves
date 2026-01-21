@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from './config';
 
 function Messages({ user, selectedFriend, onClose }) {
   const [messages, setMessages] = useState([]);
@@ -16,7 +17,7 @@ function Messages({ user, selectedFriend, onClose }) {
   const fetchConversation = () => {
     if (!selectedFriend) return;
     
-    axios.get(`http://localhost:5000/messages/conversation/${user.id}/${selectedFriend.id}`)
+    axios.get(`${API_URL}/messages/conversation/${user.id}/${selectedFriend.id}`)
       .then(response => {
         setMessages(response.data);
       })
@@ -30,7 +31,7 @@ function Messages({ user, selectedFriend, onClose }) {
     
     if (!newMessage.trim()) return;
     
-    axios.post('http://localhost:5000/messages/send', {
+    axios.post('${API_URL}/messages/send', {
       sender_id: user.id,
       recipient_id: selectedFriend.id,
       content: newMessage

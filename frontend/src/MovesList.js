@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CreateMove from './CreateMove';
 import EditMove from './EditMove';
+import { API_URL } from './config';
 
 function MovesList({ user, groupId }) {
   const [moves, setMoves] = useState([]);
@@ -12,7 +13,7 @@ function MovesList({ user, groupId }) {
   const [currentTime, setCurrentTime] = useState(Date.now());
 
   useEffect(() => {
-    axios.post(`http://localhost:5000/groups/${groupId}/cleanup-moves`)
+    axios.post(`${API_URL}/groups/${groupId}/cleanup-moves`)
       .then(() => {
         fetchMoves();
         fetchVotes();
@@ -34,7 +35,7 @@ function MovesList({ user, groupId }) {
   }, [groupId]);
 
   const fetchMoves = () => {
-    axios.get(`http://localhost:5000/api/groups/${groupId}/moves`)
+    axios.get(`${API_URL}/api/groups/${groupId}/moves`)
       .then(response => {
         setMoves(response.data);
         setLoading(false);
@@ -46,7 +47,7 @@ function MovesList({ user, groupId }) {
   };
 
   const fetchVotes = () => {
-    axios.get(`http://localhost:5000/votes/group/${groupId}`)
+    axios.get(`${API_URL}/votes/group/${groupId}`)
       .then(response => {
         setVotesData(response.data);
       })
@@ -56,7 +57,7 @@ function MovesList({ user, groupId }) {
   };
 
   const fetchGroupSettings = () => {
-    axios.get(`http://localhost:5000/groups/${groupId}/settings`)
+    axios.get(`${API_URL}/groups/${groupId}/settings`)
       .then(response => {
         setGroupSettings(response.data);
       })
@@ -66,7 +67,7 @@ function MovesList({ user, groupId }) {
   };
 
   const handleVote = (moveId) => {
-    axios.post(`http://localhost:5000/votes/move/${moveId}/vote`, {
+    axios.post(`${API_URL}/votes/move/${moveId}/vote`, {
       user_id: user.id
     })
       .then(response => {
@@ -80,7 +81,7 @@ function MovesList({ user, groupId }) {
 
   const handleDelete = (moveId) => {
     if (window.confirm('Are you sure you want to delete this move?')) {
-      axios.delete(`http://localhost:5000/api/moves/${moveId}`, {
+      axios.delete(`${API_URL}/api/moves/${moveId}`, {
         headers: {
           'Content-Type': 'application/json'
         }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from './config';
 
 function UserProfile({ user, currentUser, onClose, onSendMessage }) {
   const [profileData, setProfileData] = useState(null);
@@ -14,7 +15,7 @@ function UserProfile({ user, currentUser, onClose, onSendMessage }) {
   }, [user.id]);
 
   const fetchProfile = () => {
-    axios.get(`http://localhost:5000/friends/profile/${user.id}?current_user_id=${currentUser.id}`)
+    axios.get(`${API_URL}/friends/profile/${user.id}?current_user_id=${currentUser.id}`)
       .then(response => {
         setProfileData(response.data);
         setLoading(false);
@@ -26,7 +27,7 @@ function UserProfile({ user, currentUser, onClose, onSendMessage }) {
   };
 
   const fetchUserGroups = () => {
-    axios.get(`http://localhost:5000/groups/user/${currentUser.id}/groups`)
+    axios.get(`${API_URL}/groups/user/${currentUser.id}/groups`)
       .then(response => {
         setUserGroups(response.data);
       })
@@ -41,7 +42,7 @@ function UserProfile({ user, currentUser, onClose, onSendMessage }) {
       return;
     }
 
-    axios.post(`http://localhost:5000/groups/${selectedGroupId}/add-member`, {
+    axios.post(`${API_URL}/groups/${selectedGroupId}/add-member`, {
       user_id: user.id,
       added_by: currentUser.id
     })

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from './config';
 
 function Friends({ user, onFriendClick }) {
   const [friends, setFriends] = useState([]);
@@ -14,7 +15,7 @@ function Friends({ user, onFriendClick }) {
   }, []);
 
   const fetchFriends = () => {
-    axios.get(`http://localhost:5000/friends/user/${user.id}`)
+    axios.get(`${API_URL}/friends/user/${user.id}`)
       .then(response => {
         setFriends(response.data);
       })
@@ -24,7 +25,7 @@ function Friends({ user, onFriendClick }) {
   };
 
   const fetchFriendRequests = () => {
-    axios.get(`http://localhost:5000/friends/user/${user.id}/requests`)
+    axios.get(`${API_URL}/friends/user/${user.id}/requests`)
       .then(response => {
         setFriendRequests(response.data);
       })
@@ -36,7 +37,7 @@ function Friends({ user, onFriendClick }) {
   const handleSendRequest = (e) => {
     e.preventDefault();
     
-    axios.post('http://localhost:5000/friends/request', {
+    axios.post(`${API_URL}/friends/request`, {
       user_id: user.id,
       friend_username: friendUsername
     })
@@ -51,7 +52,7 @@ function Friends({ user, onFriendClick }) {
   };
 
   const handleAcceptRequest = (friendshipId) => {
-    axios.post(`http://localhost:5000/friends/accept/${friendshipId}`)
+    axios.post(`${API_URL}/friends/accept/${friendshipId}`)
       .then(response => {
         alert('Friend request accepted!');
         fetchFriends();
@@ -63,7 +64,7 @@ function Friends({ user, onFriendClick }) {
   };
 
   const handleDeclineRequest = (friendshipId) => {
-    axios.delete(`http://localhost:5000/friends/remove/${friendshipId}`)
+    axios.delete(`${API_URL}/friends/remove/${friendshipId}`)
       .then(response => {
         alert('Friend request declined');
         fetchFriendRequests();

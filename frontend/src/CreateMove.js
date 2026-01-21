@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { API_URL } from './config';
 
 function CreateMove({ groupId, onMoveCreated, user }) {
   const [name, setName] = useState('');
@@ -15,7 +16,7 @@ function CreateMove({ groupId, onMoveCreated, user }) {
       created_by: user.id
     };
 
-    axios.post(`http://localhost:5000/api/groups/${groupId}/moves`, newMove)
+    axios.post(`${API_URL}/api/groups/${groupId}/moves`, newMove)
       .then(response => {
         alert('Move created successfully!');
         setName('');

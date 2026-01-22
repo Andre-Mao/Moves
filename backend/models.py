@@ -23,7 +23,7 @@ class Group(db.Model):
     name = db.Column(db.String(100), nullable=False)
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     join_key = db.Column(db.String(50), unique=True, nullable=False)
-    min_votes_required = db.Column(db.Integer, default=3)  # Minimum votes needed
+    min_votes_required = db.Column(db.Integer, default=1)  # Minimum votes needed
     vote_deadline_hours = db.Column(db.Integer, default=24)  # Hours to reach votes
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     

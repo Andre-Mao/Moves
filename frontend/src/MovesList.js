@@ -202,7 +202,7 @@ function MovesList({ user, groupId }) {
                           }`}>
                             <div className="flex items-center justify-between">
                               <span className={`font-semibold ${isUrgent ? 'text-red-800' : 'text-blue-800'}`}>
-                                ⏰ Time Remaining:
+                                Time Remaining:
                               </span>
                               <span className={`text-2xl font-bold font-mono ${
                                 isUrgent ? 'text-red-600 animate-pulse' : 'text-blue-600'
@@ -211,7 +211,7 @@ function MovesList({ user, groupId }) {
                               </span>
                             </div>
                             <div className="mt-2 text-sm text-gray-600">
-                              {isUrgent ? '⚠️ Hurry! This move will expire soon!' : 'Vote now to approve this move'}
+                              {isUrgent ? 'Hurry! This move will expire soon!' : 'Vote now to approve this move'}
                             </div>
                           </div>
                         )}
@@ -219,7 +219,7 @@ function MovesList({ user, groupId }) {
                         {isExpired && (
                           <div className="mb-4 p-4 rounded-lg bg-red-100 border-2 border-red-400">
                             <div className="text-red-800 font-bold text-center">
-                              ⏰ EXPIRED - This move will be deleted
+                              EXPIRED - This move will be deleted
                             </div>
                           </div>
                         )}
@@ -234,7 +234,7 @@ function MovesList({ user, groupId }) {
                                 : 'bg-blue-500 hover:bg-blue-600'
                             } ${isExpired ? 'opacity-50 cursor-not-allowed' : ''} text-white font-semibold px-6 py-2.5 rounded-lg transition-colors shadow-sm`}
                           >
-                            {hasVoted ? '✓ Voted' : 'Vote'}
+                            {hasVoted ? 'Already Voted' : 'Vote'}
                           </button>
                           
                           <div className="flex items-center gap-2">
@@ -280,7 +280,7 @@ function MovesList({ user, groupId }) {
                         </button>
                         {isGroupLeader && move.created_by !== user.id && (
                           <span className="text-xs text-gray-500 ml-2">
-                            👑 Group Leader Controls
+                            Group Leader Controls
                           </span>
                         )}
                       </div>

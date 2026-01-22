@@ -31,7 +31,7 @@ function Messages({ user, selectedFriend, onClose }) {
     
     if (!newMessage.trim()) return;
     
-    axios.post('${API_URL}/messages/send', {
+    axios.post(`${API_URL}/messages/send`, {
       sender_id: user.id,
       recipient_id: selectedFriend.id,
       content: newMessage
@@ -60,7 +60,7 @@ function Messages({ user, selectedFriend, onClose }) {
       <div className="flex justify-between items-center p-5 border-b-2 border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100">
         <div>
           <h2 className="text-2xl font-bold text-gray-800">
-            💬 {selectedFriend.username}
+            {selectedFriend.username}
           </h2>
           <p className="text-sm text-gray-600">Online</p>
         </div>

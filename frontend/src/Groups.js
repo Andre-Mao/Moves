@@ -42,7 +42,7 @@ function Groups({ user, onGroupSelected }) {
   const handleCreateGroup = (e) => {
     e.preventDefault();
     
-    axios.post('${API_URL}/groups/groups', {
+    axios.post(`${API_URL}/groups/groups`, {
       name: newGroupName,
       created_by: user.id
     })
@@ -62,7 +62,7 @@ function Groups({ user, onGroupSelected }) {
   const handleJoinGroup = (e) => {
     e.preventDefault();
     
-    axios.post('${API_URL}/groups/join', {
+    axios.post(`${API_URL}/groups/join`, {
       join_key: joinKey,
       user_id: user.id
     })

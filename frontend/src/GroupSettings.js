@@ -67,7 +67,7 @@ function GroupSettings({ group, currentUser, onClose, onSettingsUpdated }) {
           ✕
         </button>
         
-        <h2 className="text-3xl font-bold text-white">⚙️ Group Settings</h2>
+        <h2 className="text-3xl font-bold text-white">Group Settings</h2>
         <p className="text-purple-100 mt-1">Configure voting rules for {group.name}</p>
       </div>
 
@@ -97,7 +97,7 @@ function GroupSettings({ group, currentUser, onClose, onSettingsUpdated }) {
               ))}
             </select>
             <p className="text-sm text-gray-500 mt-2">
-              📊 Group has {groupMemberCount} member{groupMemberCount !== 1 ? 's' : ''}
+              Group has {groupMemberCount} member{groupMemberCount !== 1 ? 's' : ''}
             </p>
           </div>
 
@@ -115,7 +115,7 @@ function GroupSettings({ group, currentUser, onClose, onSettingsUpdated }) {
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg font-semibold"
             />
             <p className="text-sm text-gray-500 mt-2">
-              ⏰ Moves will be deleted if they don't reach {minVotesRequired} vote{minVotesRequired > 1 ? 's' : ''} within {voteDeadlineHours} hour{voteDeadlineHours > 1 ? 's' : ''}
+              Moves will be deleted if they don't reach {minVotesRequired} vote{minVotesRequired > 1 ? 's' : ''} within {voteDeadlineHours} hour{voteDeadlineHours > 1 ? 's' : ''}
             </p>
           </div>
 
